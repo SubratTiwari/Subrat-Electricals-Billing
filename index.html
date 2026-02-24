@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Subrat Electricals - Billing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            padding: 10px;
+        }
+
+        .bill-box {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #ccc;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 🔹 WATERMARK LOGO */
+        .bill-box::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 420px;
+    height: 420px;
+    background: url("Subrat_Logo.png") no-repeat center;
+    background-size: contain;
+    opacity: 0.08;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+}
+
+
+        .bill-box * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .shop-name {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 6px;
+            box-sizing: border-box;
+        }
+
+        .customer-box {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .customer-box div {
+            flex: 1;
+        }
+
+        .totals {
+            margin-top: 15px;
+            text-align: right;
+            font-size: 18px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin-top: 10px;
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        @media print {
+            button {
+                display: none;
+            }
+            input {
+                border: none;
+            }
+            body {
+                background: #fff;
+            }
+        }
+        @media print {
+    .bill-box::before {
+        opacity: 0.08;   /* ensure watermark prints */
+    }
+}
+
+    </style>
+</head>
+
+<body>
+
+<div class="bill-box">
+
+    <div class="header">
+        <div>
+            <div class="shop-name">Subrat Electricals</div>
+            <div>Main Road, Salempur</div>
+            <div>Mob: 9984152967</div>
+        </div>
+        <div>
+            <b>GST No:</b> 22ABCDE1234F1Z5
+        </div>
+    </div>
+
+    <!-- Customer Details -->
+    <div class="customer-box">
+        <div>
+            <label><b>Customer Name:</b></label>
+            <input type="text" placeholder="Enter customer name">
+        </div>
+        <div>
+            <label><b>Mobile No:</b></label>
+            <input type="number" placeholder="Enter mobile number">
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Price (₹)</th>
+                <th>Qty</th>
+                <th>Amount (₹)</th>
+            </tr>
+        </thead>
+        <tbody id="billBody">
+            <tr>
+                <td><input type="text" placeholder="Item name"></td>
+                <td><input type="number" oninput="calculate(this)"></td>
+                <td><input type="number" oninput="calculate(this)"></td>
+                <td><input type="number" readonly></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button onclick="addRow()">+ Add Item</button>
+
+    <div class="totals">
+        <hr>
+        <b>Total Amount: ₹ <span id="grandTotal">0.00</span></b>
+    </div>
+
+    <button onclick="window.print()">🖨 Print / Save PDF</button>
+
+</div>
+
+<script>
+function calculate(el) {
+    let row = el.parentElement.parentElement;
+    let price = row.children[1].children[0].value || 0;
+    let qty = row.children[2].children[0].value || 0;
+    row.children[3].children[0].value = price * qty;
+    calculateTotal();
+}
+
+function calculateTotal() {
+    let total = 0;
+    document.querySelectorAll("#billBody tr").forEach(row => {
+        total += Number(row.children[3].children[0].value || 0);
+    });
+    document.getElementById("grandTotal").innerText = total.toFixed(2);
+}
+
+function addRow() {
+    let row = `
+        <tr>
+            <td><input type="text" placeholder="Item name"></td>
+            <td><input type="number" oninput="calculate(this)"></td>
+            <td><input type="number" oninput="calculate(this)"></td>
+            <td><input type="number" readonly></td>
+        </tr>`;
+    document.getElementById("billBody").insertAdjacentHTML("beforeend", row);
+}
+</script>
+
+</body>
+</html>
+ 
